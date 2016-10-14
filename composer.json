@@ -1,0 +1,29 @@
+{
+    "name":        "adrenalinkin/enum-mapper",
+    "description": "This component provides easy way to simulate ENUM behaviour on the PHP layer instead database and convert DB value into human representation and vise versa",
+    "type":        "library",
+    "keywords":    ["enum", "humanize", "php", "database", "component"],
+    "license":     "MIT",
+
+    "authors": [
+        {
+            "email": "adrenalinkin@gmail.com",
+            "name":  "Viktor Linkin",
+            "role":  "Developer"
+        }
+    ],
+
+    "require": {
+        "php": "~5.4"
+    },
+
+    "suggest": {
+        "adrenalinkin/enum-property-bundle": "Provides easy way to integrate with Symfony framework"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Linkin\\Component\\EnumMapper\\": ""
+        }
+    }
+}
