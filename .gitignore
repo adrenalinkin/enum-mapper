@@ -1,6 +1,5 @@
 ### Composer template
 auth.json
-composer.lock
 composer.phar
 /vendor
 
