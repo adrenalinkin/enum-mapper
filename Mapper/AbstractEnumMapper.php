@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the EnumMapper component package.
+ *
+ * (c) Viktor Linkin <adrenalinkin@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Linkin\Component\EnumMapper\Mapper;
 
 use Linkin\Component\EnumMapper\Exception\UndefinedMapValueException;
@@ -9,7 +18,14 @@ use Linkin\Component\EnumMapper\Exception\UndefinedMapValueException;
  */
 abstract class AbstractEnumMapper
 {
-    const PREFIX_DB    = 'DB_';
+    /**
+     * Constant prefix for the database values
+     */
+    const PREFIX_DB = 'DB_';
+
+    /**
+     * Constant prefix for the humanized value
+     */
     const PREFIX_HUMAN = 'HUMAN_';
 
     /**
@@ -21,26 +37,6 @@ abstract class AbstractEnumMapper
      * @var array
      */
     private $constants = [];
-
-    /**
-     * @param string|int $value
-     * @param string     $prefixFrom
-     *
-     * @throws UndefinedMapValueException
-     *
-     * @return string|int
-     */
-    private function convert($value, $prefixFrom)
-    {
-        foreach ($this->getConstants() as $constName => $constValue) {
-            // process constant if she's does start from reserved prefix and values was equals
-            if (0 === strpos($constName, $prefixFrom) && $value === $constValue) {
-                return $this->getAppropriateConstValue($prefixFrom, $constName);
-            }
-        }
-
-        throw new UndefinedMapValueException($this->getClassName(), $value);
-    }
 
     /**
      * @param int|string $value
@@ -93,46 +89,6 @@ abstract class AbstractEnumMapper
     }
 
     /**
-     * @param string $prefixFrom
-     * @param string $constName
-     *
-     * @return int|string
-     */
-    protected function getAppropriateConstValue($prefixFrom, $constName)
-    {
-        $prefixTo  = $prefixFrom == self::PREFIX_DB ? self::PREFIX_HUMAN : self::PREFIX_DB;
-        $count     = 1;
-        $constName = str_replace($prefixFrom, $prefixTo, $constName, $count);
-
-        return constant('static::' . $constName);
-    }
-
-    /**
-     * @return string
-     */
-    private function getClassName()
-    {
-        if (null == $this->className) {
-            $this->className = get_class($this);
-        }
-
-        return $this->className;
-    }
-
-    /**
-     * @return array
-     */
-    private function getConstants()
-    {
-        if (empty($this->constants)) {
-            $reflection      = new \ReflectionClass($this->getClassName());
-            $this->constants = $reflection->getConstants();
-        }
-
-        return $this->constants;
-    }
-
-    /**
      * @return array
      */
     public function getMap()
@@ -174,5 +130,65 @@ abstract class AbstractEnumMapper
         shuffle($values);
 
         return array_shift($values);
+    }
+
+    /**
+     * @param string $prefixFrom
+     * @param string $constName
+     *
+     * @return int|string
+     */
+    protected function getAppropriateConstValue($prefixFrom, $constName)
+    {
+        $prefixTo  = $prefixFrom === self::PREFIX_DB ? self::PREFIX_HUMAN : self::PREFIX_DB;
+        $count     = 1;
+        $constName = str_replace($prefixFrom, $prefixTo, $constName, $count);
+
+        return constant('static::'.$constName);
+    }
+
+    /**
+     * @param string|int $value
+     * @param string     $prefixFrom
+     *
+     * @throws UndefinedMapValueException
+     *
+     * @return string|int
+     */
+    private function convert($value, $prefixFrom)
+    {
+        foreach ($this->getConstants() as $constName => $constValue) {
+            // process constant if she's does start from reserved prefix and values was equals
+            if (0 === strpos($constName, $prefixFrom) && $value === $constValue) {
+                return $this->getAppropriateConstValue($prefixFrom, $constName);
+            }
+        }
+
+        throw new UndefinedMapValueException($this->getClassName(), $value);
+    }
+
+    /**
+     * @return string
+     */
+    private function getClassName()
+    {
+        if (null === $this->className) {
+            $this->className = get_class($this);
+        }
+
+        return $this->className;
+    }
+
+    /**
+     * @return array
+     */
+    private function getConstants()
+    {
+        if (empty($this->constants)) {
+            $reflection      = new \ReflectionClass($this->getClassName());
+            $this->constants = $reflection->getConstants();
+        }
+
+        return $this->constants;
     }
 }
