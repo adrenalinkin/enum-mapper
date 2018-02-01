@@ -185,8 +185,12 @@ abstract class AbstractEnumMapper
     private function getConstants()
     {
         if (empty($this->constants)) {
-            $reflection      = new \ReflectionClass($this->getClassName());
-            $this->constants = $reflection->getConstants();
+            try {
+                $reflection      = new \ReflectionClass($this->getClassName());
+                $this->constants = $reflection->getConstants();
+            } catch (\ReflectionException $e) {
+                $this->constants = [];
+            }
         }
 
         return $this->constants;
