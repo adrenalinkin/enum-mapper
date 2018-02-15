@@ -133,7 +133,7 @@ Get random database or humanized value:
     $randomHuman = $mapper->getRandomHumanValue([GenderMapper::HUMAN_UNDEFINED]); // Male || Female
 ```
 
-Лицензия
---------
+License
+-------
 
 [![license](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](./LICENSE)
