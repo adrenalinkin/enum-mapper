@@ -1,25 +1,44 @@
-Enum Mapper
+Enum Mapper [![На Русском](https://img.shields.io/badge/Перейти_на-Русский-green.svg?style=flat-square)](./README.RU.md)
 ===========
 
-Компонент позволит быстро быстро и удобно производить имитацию `ENUM` поля баз данных в слое `PHP`, для этого будет
-достаточно унаследовать абстрактный класс **AbstractEnumMapper** и определить в наследнике набор констант со
-специальными префиксами:
+Introduction
+------------
 
- * **DB_** - с этим префиксом константы будут содержать значение, которое должно быть в БД
- * **HUMAN_** - с этим префиксом константы будут содержать значение, которое должно быть показано пользователю.
+Component provides easy way to emulate `ENUM` behaviour on the `PHP` layer instead database by constant usage.
+Convert database value into human representation and vise versa.
 
-### Пример использования
+Installation
+------------
 
-Допустим у вас имеется необходимость хранить пол. Тогда ваш класс будет иметь следующий вид:
+Open a command console, enter your project directory and execute the following command to download the latest stable
+version of this component:
+```text
+    composer require adrenalinkin/enum-mapper
+```
+*This command requires you to have [Composer](https://getcomposer.org) install globally.*
+
+Usage examples
+--------------
+
+### Mapper creation
+
+For start create mapper-class and extend him from [AbstractEnumMapper](./Mapper/AbstractEnumMapper.php).
+For second and last step - determine list of the constants with specific prefixes:
+ * **DB_** - contains database values.
+ * **HUMAN_** - contains humanized values.
+
+Let's say we need to store user's gender. In that case we need to create mapper-class:
 
 ```php
+<?php
+
 use Linkin\Component\EnumMapper\Mapper\AbstractEnumMapper;
 
 class GenderMapper extends AbstractEnumMapper
 {
     const DB_UNDEFINED = 0;
-    const DB_MALE      = 1;
-    const DB_FEMALE    = 2;
+    const DB_MALE      = 10;
+    const DB_FEMALE    = 20;
 
     const HUMAN_UNDEFINED = 'Undefined';
     const HUMAN_MALE      = 'Male';
@@ -27,61 +46,94 @@ class GenderMapper extends AbstractEnumMapper
 }
 ```
 
-При необходимости вы можете получить человеко-понятное представление на основе данных из базы данных:
+### Usage
+
+#### fromDbToHuman
+
+Get humanized value by received database value:
 
 ```php
-    $humanValue = $mapper->fromDbToHuman($dbGenderValue);
+<?php
+
+    $mapper        = new GenderMapper();
+    $dbGenderValue = GenderMapper::DB_MALE; // 10
+    $humanValue    = $mapper->fromDbToHuman($dbGenderValue);
 ```
 
-А также осуществить такое же преобразование в обратном порядке:
+Variable `$humanValue` will be contain `Male` value.
+**Note**: When you will try to get value of the unregistered value will be throws `UndefinedMapValueException`.
+
+#### fromHumanToDb
+
+Get database value by received humanized value:
 
 ```php
-    $dbValue = $mapper->fromHumanToDb($humanGenderValue);
+<?php
+
+    $mapper           = new GenderMapper();
+    $humanGenderValue = GenderMapper::HUMAN_FEMALE; // Female
+    $dbValue          = $mapper->fromHumanToDb($humanGenderValue);
 ```
 
-Если вы попытаетесь получить представление для не зарегистрированного значение, то будет брошено исключение
-`UndefinedMapValueException`.
+Variable `$dbValue` will be contain `20` value.
+**Note**: When you will try to get value of the unregistered value will be throws `UndefinedMapValueException`.
 
-Еще вы имеете возможность получить полный список соответсвия значения из базы данных и их человеко-понятных значений:
+#### getMap
+
+Get full list of the available pairs of the database and humanized values:
 
 ```php
-    $map = $mapper->getMap();
+<?php
+
+    $mapper = new GenderMapper();
+    $map    = $mapper->getMap(); // [0 => 'Undefined', 10 => 'Male', 20 => 'Female']
 ```
 
-Конечно не стоит забывать и о том, что вы всегда можете использовать константы для сравнения:
+### Constant usage
+
+All the time you available to use constant as is:
 
 ```php
-    if (GenderMapper::DB_UNDEFINED == $maleFromForm) {
-        throw new \Exception('Поле "Пол" обязательно для заполнения в этой форме');
+<?php
+
+    if (GenderMapper::DB_UNDEFINED === $maleFromForm) {
+        throw new \Exception('Field "Gender" is required in this form');
     }
 ```
 
-В арсенале абстрактного класса есть еще несколько полезных методов, таких как получение списка всех доступных значений
-для базы данных и аналогичный метод для получения доступных человеко-понятных значений:
+#### getAllowedDbValues and getAllowedHumanValues
+
+Get list of the all available value for the database values or for the humanized values:
 
 ```php
-    $allowedDb    = $mapper->getAllowedDbValues();
-    $allowedHuman = $mapper->getAllowedHumanValues();
+<?php
+
+    $mapper       = new GenderMapper();
+    $allowedDb    = $mapper->getAllowedDbValues();    // [0, 10, 20]
+    $allowedHuman = $mapper->getAllowedHumanValues(); // ['Undefined', 'Male', 'Female']
+
+    // Exclude values from result
+    $allowedDb    = $mapper->getAllowedDbValues([GenderMapper::DB_UNDEFINED]);       // [10, 20]
+    $allowedHuman = $mapper->getAllowedHumanValues([GenderMapper::HUMAN_UNDEFINED]); // ['Male', 'Female']
 ```
 
-Имеется возможность исключить некоторые значения, если передать список исключений в качетсве массива в методы:
+#### getRandomDbValue и getRandomHumanValue
+
+Get random database or humanized value:
 
 ```php
-    $allowedDb    = $mapper->getAllowedDbValues([GenderMapper::DB_UNDEFINED]);
-    $allowedHuman = $mapper->getAllowedHumanValues([GenderMapper::HUMAN_UNDEFINED]);
+<?php
+
+    $mapper      = new GenderMapper();
+    $randomDb    = $mapper->getRandomDbValue();    // 0 || 10 || 20
+    $randomHuman = $mapper->getRandomHumanValue(); // Undefined || Male || Female
+
+    // Exclude values from result
+    $randomDb    = $mapper->getRandomDbValue([GenderMapper::DB_UNDEFINED]);       // 10 || 20
+    $randomHuman = $mapper->getRandomHumanValue([GenderMapper::HUMAN_UNDEFINED]); // Male || Female
 ```
 
-И также, при необходимости, можно получить случайное значение одного из доступных значений базы данных или
-человеко-понятного представления:
+Лицензия
+--------
 
-```php
-    $randomDb    = $mapper->getRandomDbValue();
-    $randomHuman = $mapper->getRandomHumanValue();
-```
-
-Аналогично получению списка доступных значений можно исключить не желательные значения:
-
-```php
-    $randomDb    = $mapper->getRandomDbValue([GenderMapper::DB_UNDEFINED]);
-    $randomHuman = $mapper->getRandomHumanValue([GenderMapper::HUMAN_UNDEFINED]);
-```
+[![license](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](./LICENSE)

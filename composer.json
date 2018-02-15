@@ -1,8 +1,8 @@
 {
     "name":        "adrenalinkin/enum-mapper",
-    "description": "This component provides easy way to simulate ENUM behaviour on the PHP layer instead database and convert DB value into human representation and vise versa",
+    "description": "Component provides easy way to emulate ENUM behaviour on the PHP layer instead database and convert DB value into human representation and vise versa",
     "type":        "library",
-    "keywords":    ["enum", "humanize", "php", "database", "component"],
+    "keywords":    ["enum", "humanize", "php", "database", "component", "convert"],
     "license":     "MIT",
 
     "authors": [
@@ -14,7 +14,7 @@
     ],
 
     "require": {
-        "php": ">=5.4"
+        "php": "~5.4||~7.0"
     },
 
     "suggest": {

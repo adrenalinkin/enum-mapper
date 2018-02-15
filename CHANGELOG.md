@@ -1,3 +1,9 @@
+## [1.0.3] - 2018-02-15
+### Added
+- Added informative PhpDoc.
+- Improved documentation.
+- Added english version of the documentation.
+
 ## [1.0.2] - 2018-02-02
 ### Changed
 - Improved exception catching.

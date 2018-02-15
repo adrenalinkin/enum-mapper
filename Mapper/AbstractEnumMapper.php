@@ -29,21 +29,28 @@ abstract class AbstractEnumMapper
     const PREFIX_HUMAN = 'HUMAN_';
 
     /**
+     * Name of the current class
+     *
      * @var string
      */
     private $className;
 
     /**
+     * List of the constants of the current class in the 'key' => 'value' pairs.
+     * The 'key' contains constant name and 'value' contains constant value.
+     *
      * @var array
      */
     private $constants = [];
 
     /**
-     * @param int|string $value
+     * Returns humanized value by received database value
      *
-     * @throws UndefinedMapValueException
+     * @param int|string $value Database value
      *
-     * @return int|string
+     * @throws UndefinedMapValueException When received database value does not exists
+     *
+     * @return int|string Humanized value
      */
     public function fromDbToHuman($value)
     {
@@ -51,11 +58,13 @@ abstract class AbstractEnumMapper
     }
 
     /**
-     * @param int|string $value
+     * Returns database value by received humanized value
      *
-     * @throws UndefinedMapValueException
+     * @param int|string $value Humanized value
      *
-     * @return int|string
+     * @throws UndefinedMapValueException When received humanized value does not exists
+     *
+     * @return int|string Database value
      */
     public function fromHumanToDb($value)
     {
@@ -63,7 +72,9 @@ abstract class AbstractEnumMapper
     }
 
     /**
-     * @param array $except
+     * Returns list of the all registered database values
+     *
+     * @param array $except List of the database values which should be excluded
      *
      * @return array
      */
@@ -76,7 +87,9 @@ abstract class AbstractEnumMapper
     }
 
     /**
-     * @param array $except
+     * Returns list of the all registered humanized values
+     *
+     * @param array $except List of the humanized values which should be excluded
      *
      * @return array
      */
@@ -89,6 +102,9 @@ abstract class AbstractEnumMapper
     }
 
     /**
+     * Returns map of the all registered values in the 'key' => 'value' pairs.
+     * The 'key' equal to database value and the 'value' equal to humanized value.
+     *
      * @return array
      */
     public function getMap()
@@ -105,7 +121,9 @@ abstract class AbstractEnumMapper
     }
 
     /**
-     * @param array $except
+     * Returns random database value
+     *
+     * @param array $except List of the database values which should be excluded
      *
      * @return string|int
      */
@@ -119,7 +137,9 @@ abstract class AbstractEnumMapper
     }
 
     /**
-     * @param array $except
+     * Returns random humanized value
+     *
+     * @param array $except List of the humanized values which should be excluded
      *
      * @return string|int
      */
@@ -133,8 +153,12 @@ abstract class AbstractEnumMapper
     }
 
     /**
-     * @param string $prefixFrom
-     * @param string $constName
+     * Returns appropriated pair value
+     *
+     * @param string $prefixFrom Constant prefix  which determine what the value should be returns
+     *                           put self::PREFIX_DB to get appropriated humanized value
+     *                           or self::PREFIX_HUMAN to get appropriated database value
+     * @param string $constName  Constant name which should be processed
      *
      * @return int|string
      */
@@ -148,10 +172,14 @@ abstract class AbstractEnumMapper
     }
 
     /**
-     * @param string|int $value
-     * @param string     $prefixFrom
+     * Returns appropriated value by received origin value. Humanized value by received database value and vise versa.
      *
-     * @throws UndefinedMapValueException
+     * @param string|int $value      Value for convert
+     * @param string     $prefixFrom Constant prefix  which determine what the value should be returns
+     *                               put self::PREFIX_DB to get appropriated humanized value
+     *                               or self::PREFIX_HUMAN to get appropriated database value
+     *
+     * @throws UndefinedMapValueException When received value does not exists
      *
      * @return string|int
      */
@@ -168,6 +196,8 @@ abstract class AbstractEnumMapper
     }
 
     /**
+     * Returns current class name
+     *
      * @return string
      */
     private function getClassName()
@@ -180,6 +210,8 @@ abstract class AbstractEnumMapper
     }
 
     /**
+     * Returns list of the all available constants of the current class
+     *
      * @return array
      */
     private function getConstants()
