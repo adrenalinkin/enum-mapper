@@ -11,7 +11,7 @@ Enum Mapper [![In English](https://img.shields.io/badge/Switch_To-English-green.
 
 Откройте консоль и, перейдя в директорию проекта, выполните следующую команду для загрузки наиболее подходящей
 стабильной версии этого компонента:
-```text
+```bash
     composer require adrenalinkin/enum-mapper
 ```
 *Эта команда подразумевает что [Composer](https://getcomposer.org) установлен и доступен глобально.*
